@@ -202,25 +202,22 @@ public class ATMTest {
         int amount = 100;
         int expectedSourceBalance = regularSource1.getBalance() - amount;
         int expectedTargetBalance = limited.getBalance() + amount;
-        
+
         atm.transfer(regularSource1, limited, amount);
-        
+
         assertEquals(expectedSourceBalance, regularSource1.getBalance());
         assertEquals(expectedTargetBalance, limited.getBalance());
     }
 
     @Test
-    @DisplayName("teste")
-    void teste() {
-        int amount = 250; 
-    
-    Throwable exception = assertThrows(InsufficientFundsException.class, () -> {
-        atm.transfer(regularSource1, limitedTarget1, amount);
-    });    
-    assertEquals("Target account can't hold that amount", exception.getMessage());
-    
-    
-    }
-   
+    @DisplayName("Tranferring to not maintenable limited account")
+    void transfer_to_not_maintenable_limited_account() {
+        int amount = 250;
 
+        Throwable exception = assertThrows(InsufficientFundsException.class, () -> {
+            atm.transfer(regularSource1, limitedTarget1, amount);
+        });
+
+        assertEquals("Target account can't hold that amount", exception.getMessage());
+    }
 }
