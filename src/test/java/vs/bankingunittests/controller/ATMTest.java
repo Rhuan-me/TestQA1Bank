@@ -3,6 +3,8 @@ package vs.bankingunittests.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import javax.naming.LimitExceededException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ public class ATMTest {
     Account limited;
     Account regularSource1;
     Account regularTarget1;
+    LimitedAccount limitedTarget1;
     ATM atm;
 
     @BeforeEach
@@ -29,6 +32,8 @@ public class ATMTest {
         limited = new LimitedAccount("mixos", 300, "limit", 500);
         regularSource1 = new Account("chris", 2000, "regular");
         regularTarget1 = new Account("geo", 5000, "regular");
+        limitedTarget1 = new LimitedAccount("kádymo", 300, "limit", 500);
+ 
         atm = new ATM();
     }
 
@@ -190,5 +195,32 @@ public class ATMTest {
     void transfer_regular_source_limited_target_zero_amount() throws InsufficientFundsException {
 
     }
+
+    @Test
+    @DisplayName("Transferring to limited account within limit")
+    void transfer_to_limited_account_within_limit() throws InsufficientFundsException {
+        int amount = 100;
+        int expectedSourceBalance = regularSource1.getBalance() - amount;
+        int expectedTargetBalance = limited.getBalance() + amount;
+        
+        atm.transfer(regularSource1, limited, amount);
+        
+        assertEquals(expectedSourceBalance, regularSource1.getBalance());
+        assertEquals(expectedTargetBalance, limited.getBalance());
+    }
+
+    @Test
+    @DisplayName("teste")
+    void teste() {
+        int amount = 250; 
+    
+    Throwable exception = assertThrows(InsufficientFundsException.class, () -> {
+        atm.transfer(regularSource1, limitedTarget1, amount);
+    });    
+    assertEquals("Target account can't hold that amount", exception.getMessage());
+    
+    
+    }
+   
 
 }
